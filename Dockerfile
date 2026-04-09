@@ -1,11 +1,10 @@
 FROM python:3.10-bullseye
 
-# Mega.nz ka official Debian repository add karna aur MegaCMD install karna
-RUN apt-get update && apt-get install -y wget curl gnupg2 \
-    && curl -fsSL https://mega.nz/keys/MEGA_GPG_KEY.asc | gpg --dearmor -o /usr/share/keyrings/mega-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/mega-archive-keyring.gpg] https://mega.nz/linux/repo/Debian_11/ ./" > /etc/apt/sources.list.d/megacmd.list \
-    && apt-get update \
-    && apt-get install -y megacmd \
+# Direct .deb package se MegaCMD install karna (Bina GPG error ke)
+RUN apt-get update && apt-get install -y wget \
+    && wget https://mega.nz/linux/repo/Debian_11/amd64/megacmd-Debian_11_amd64.deb \
+    && apt-get install -y ./megacmd-Debian_11_amd64.deb \
+    && rm megacmd-Debian_11_amd64.deb \
     && rm -rf /var/lib/apt/lists/*
 
 # Working directory set karna
