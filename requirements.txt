@@ -1,0 +1,4 @@
+python-telegram-bot==20.7
+motor>=3.4.0
+python-dotenv==1.0.1
+mega.py==1.0.8
