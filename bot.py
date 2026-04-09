@@ -17,7 +17,7 @@ import database as db
 # Config
 # ==========================================
 BOT_TOKEN      = os.environ.get("BOT_TOKEN", "8467428373:AAGh5NuSkPkTWkZL_ytqz9qunrJLkZWrkCk")
-OWNER_ID       = int(os.environ.get("OWNER_ID", "123456789"))   # <-- apna Telegram ID daalo
+OWNER_ID       = int(os.environ.get("OWNER_ID", "8493596199"))   # <-- apna Telegram ID daalo
 OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "@Sourav00876")
 
 CMD_TIMEOUT    = 60    # seconds for each mega command
