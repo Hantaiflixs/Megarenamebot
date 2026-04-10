@@ -14,9 +14,6 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import threading
 import database as db
 
-# ==========================================
-# Config
-# ==========================================
 BOT_TOKEN      = os.environ.get("BOT_TOKEN", "8467428373:AAGh5NuSkPkTWkZL_ytqz9qunrJLkZWrkCk")
 OWNER_ID       = int(os.environ.get("OWNER_ID", "8493596199"))
 OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "@Sourav00876")
@@ -29,10 +26,6 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 user_sessions = {}
-
-# ==========================================
-# Auth Helpers
-# ==========================================
 
 def is_owner(user_id: int) -> bool:
     return user_id == OWNER_ID
@@ -52,10 +45,6 @@ async def send_unauthorized(update: Update):
         parse_mode="Markdown"
     )
 
-# ==========================================
-# MegaCMD Helper Engine
-# ==========================================
-
 def run_cmd(args, timeout=CMD_TIMEOUT, extra_env=None):
     try:
         env = os.environ.copy()
@@ -68,22 +57,6 @@ def run_cmd(args, timeout=CMD_TIMEOUT, extra_env=None):
     except Exception as e:
         return "", str(e), 1
 
-# ──────────────────────────────────────────────────────────────────
-# OVER-QUOTA LOGIN FIX
-#
-# Problem: Jab MEGA account ki storage quota exceed hoti hai,
-#          MegaCMD normal login pe error deta hai.
-#
-# Key Insight: mega-mv (rename) = SIRF metadata change hai.
-#              Koi upload nahi hoti. Quota se bilkul affect nahi hota.
-#              Isliye over-quota account mein bhi rename perfectly kaam karta hai.
-#
-# Solution:
-#   Attempt 1 → MEGA_IGNORE_UPLOAD_QUOTA=1 env ke saath login
-#   Attempt 2 → --no-ask-for-confirmation flag ke saath login
-#   Agar success → over_quota flag set karke user ko warn karo
-#                  (rename kaam karega, upload nahi)
-# ──────────────────────────────────────────────────────────────────
 
 QUOTA_ENV = {
     "MEGA_IGNORE_UPLOAD_QUOTA":    "1",
@@ -163,10 +136,6 @@ def mega_account_info() -> dict:
         "folder_count": len(folder_list),
     }
 
-# ==========================================
-# Rename Pattern Logic
-# ==========================================
-
 def build_new_name(old_name: str, pattern: str, replacement: str, index: int) -> str:
     """
     Patterns:
@@ -206,10 +175,6 @@ def build_new_name(old_name: str, pattern: str, replacement: str, index: int) ->
 
     return old_name
 
-# ==========================================
-# /start
-# ==========================================
-
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     await db.add_user(uid)
@@ -239,10 +204,6 @@ async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         "  `/broadcast message` — Message all users",
         parse_mode="Markdown"
     )
-
-# ==========================================
-# /login  — Over-quota safe
-# ==========================================
 
 async def login_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -307,10 +268,6 @@ async def login_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await msg.edit_text(f"❌ Error: `{e}`", parse_mode="Markdown")
 
-# ==========================================
-# /logout  — NEW
-# ==========================================
-
 async def logout_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
 
@@ -339,10 +296,6 @@ async def logout_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await msg.edit_text(f"❌ Error: `{e}`", parse_mode="Markdown")
 
-# ==========================================
-# /stats
-# ==========================================
-
 async def stats_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     if not await check_auth(uid):
@@ -367,10 +320,6 @@ async def stats_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         f"👑 Premium: `{'Yes ✨' if user_data['is_premium'] else 'No'}`",
         parse_mode="Markdown"
     )
-
-# ==========================================
-# /check
-# ==========================================
 
 async def check_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -400,10 +349,6 @@ async def check_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await msg.edit_text(f"❌ Error: `{e}`", parse_mode="Markdown")
 
-# ==========================================
-# /megainfo
-# ==========================================
-
 async def megainfo_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     if not await check_auth(uid):
@@ -432,10 +377,6 @@ async def megainfo_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await msg.edit_text("⏱️ Request timed out.")
     except Exception as e:
         await msg.edit_text(f"❌ Error: `{e}`", parse_mode="Markdown")
-
-# ==========================================
-# /renameall  — with @channel shortcut
-# ==========================================
 
 async def renameall_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -487,10 +428,6 @@ async def renameall_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-# ==========================================
-# /premium
-# ==========================================
-
 async def premium_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     if not await check_auth(uid):
@@ -508,10 +445,6 @@ async def premium_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-# ==========================================
-# /lang
-# ==========================================
-
 async def lang_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     if not await check_auth(uid):
@@ -524,10 +457,6 @@ async def lang_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
          InlineKeyboardButton("🇪🇸 Spanish", callback_data="lang_es")],
     ]
     await update.message.reply_text("🌐 Apni language choose karein:", reply_markup=InlineKeyboardMarkup(keyboard))
-
-# ==========================================
-# /help
-# ==========================================
 
 async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
@@ -548,10 +477,6 @@ async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         f"📩 Help: {OWNER_USERNAME}",
         parse_mode="Markdown"
     )
-
-# ==========================================
-# Owner Commands
-# ==========================================
 
 async def auth_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_owner(update.effective_user.id):
@@ -629,10 +554,6 @@ async def setpremium_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     except ValueError:
         await update.message.reply_text("❌ Invalid user ID.")
 
-# ==========================================
-# Button Handler
-# ==========================================
-
 async def button_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -680,10 +601,6 @@ async def button_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         await db.set_language(uid, data.split("_")[1])
         await query.edit_message_text(f"✅ Language set kar di!", parse_mode="Markdown")
 
-# ==========================================
-# Message Handler
-# ==========================================
-
 async def message_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     if not await check_auth(uid):
@@ -713,10 +630,6 @@ async def message_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         f"Confirm?"
     )
     await update.message.reply_text(preview, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
-
-# ==========================================
-# Core Bulk Rename — handles 5k-10k files
-# ==========================================
 
 async def do_bulk_rename(message, uid: int, ctx: ContextTypes.DEFAULT_TYPE):
     pattern     = ctx.user_data.get("rename_pattern", "prefix")
@@ -822,10 +735,6 @@ async def do_bulk_rename(message, uid: int, ctx: ContextTypes.DEFAULT_TYPE):
         logger.error(f"do_bulk_rename uid={uid}: {e}")
         await message.reply_text(f"❌ Error: `{e}`", parse_mode="Markdown")
 
-# ==========================================
-# Koyeb Health Check Server
-# ==========================================
-
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -838,10 +747,6 @@ def start_health_server():
     port = int(os.getenv("PORT", 8000))
     server = HTTPServer(("0.0.0.0", port), HealthHandler)
     server.serve_forever()
-
-# ==========================================
-# Main
-# ==========================================
 
 if __name__ == "__main__":
     threading.Thread(target=start_health_server, daemon=True).start()
