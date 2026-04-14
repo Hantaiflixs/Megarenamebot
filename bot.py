@@ -15,9 +15,9 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import threading
 import database as db
 
-BOT_TOKEN      = os.environ.get("BOT_TOKEN", "8467428373:AAGh5NuSkPkTWkZL_ytqz9qunrJLkZWrkCk")
-OWNER_ID       = int(os.environ.get("OWNER_ID", "8493596199"))
-OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "@Sourav00876")
+BOT_TOKEN      = os.environ.get("BOT_TOKEN", "8244193379:AAHSu7geMxF0_VRmyZwVGO-vXOL7WNgs5UU")
+OWNER_ID       = int(os.environ.get("OWNER_ID", "6994950053"))
+OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "@luxeFlix2")
 
 CMD_TIMEOUT  = 60
 BATCH_SIZE   = 50
