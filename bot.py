@@ -28,7 +28,6 @@ logger = logging.getLogger(__name__)
 
 user_sessions = {}
 
-# ── Parallel rename config ─────────────────────────────────────────
 # 10 files ek saath rename hongi → ~8-10x speed improvement
 WORKERS   = 10
 _executor = ThreadPoolExecutor(max_workers=WORKERS)
