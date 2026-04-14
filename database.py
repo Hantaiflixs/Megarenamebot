@@ -3,7 +3,7 @@ import os
 
 MONGO_URI = os.environ.get(
     "MONGO_URI",
-    "mongodb+srv://gauravsingh576466_db_user:mOuhQVApEQVMpeYr@cluster0.d94qqiv.mongodb.net/BotDatabase?retryWrites=true&w=majority&appName=Cluster0"
+    "mongodb+srv://vsigsiehvdidod_db_user:LZuzYqhzdiehcHOB@cluster0.6dolbi0.mongodb.net/?appName=Cluster0"
 )
 
 client = AsyncIOMotorClient(MONGO_URI)
